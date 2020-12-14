@@ -7,7 +7,7 @@
       rows="20"
       ref="textareaObj"
       :value="this.cards[this.cardFocused].text"
-      @input="sendMessage"
+      @input="sendMessageToCardList"
     >
     </textarea>
   </div>
@@ -15,14 +15,15 @@
 <script>
 export default {
   name: "Note",
-  props: ["cards", "cardFocused", "getInput"],
+  props: ["cards", "cardFocused", "getInput", "updateDatabase"],
   data: () => ({
     text: ""
   }),
   methods: {
-    sendMessage() {
+    sendMessageToCardList() {
       const valueOfTextarea = this.$refs.textareaObj.value;
       this.$emit("getInput", valueOfTextarea);
+      this.$emit("updateDatabase");
     }
   }
 };

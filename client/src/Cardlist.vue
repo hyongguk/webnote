@@ -39,6 +39,7 @@
             v-bind:cardFocused="cardFocused"
             @getInput="getInput"
             @delete-note="deleteNote"
+            @updateDatabase="updateDatabase"
           />
         </div>
       </div>
@@ -47,10 +48,16 @@
 </template>
 <script>
 import Note from "./Note";
+const axios = require("axios");
+
 export default {
   name: "Cardlist",
   components: {
     Note
+  },
+  beforeMount: async function() {
+    console.log(" in beforecreated");
+    await axios.get("/api").then(response => console.log(response.data));
   },
   methods: {
     //タイトルを表示する
@@ -117,6 +124,20 @@ export default {
       this.cards.sort((a, b) => {
         return b.time - a.time;
       });
+    },
+
+    updateDatabase() {
+      console.log(this.timeoutId);
+      clearTimeout(this.timeoutId);
+      //入力して２秒後にサーバーに情報を送る
+      this.timeoutId = setTimeout(async function() {
+        //this.sendDataToBack();
+        //
+        await axios.get("/api").then(response => console.log(response.data));
+        // let response = await fetch('/api')
+        //   .then(response => response.json())
+        //   .then(data => console.log(data))
+      }, 2000);
     }
   },
   data: () => ({
@@ -143,7 +164,8 @@ export default {
           "and a super long one\nlalalalalalala\n\nasdfasdfasdf\nasdfasdfqweroiuprqwoirwqoiupqeripuqerwhi!",
         time: new Date()
       }
-    ]
+    ],
+    timeoutId: ""
   })
 };
 </script>
