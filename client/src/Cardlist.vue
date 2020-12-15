@@ -39,7 +39,6 @@
             v-bind:cardFocused="cardFocused"
             @getInput="getInput"
             @delete-note="deleteNote"
-            @updateDatabase="updateDatabase"
           />
         </div>
       </div>
@@ -56,8 +55,16 @@ export default {
     Note
   },
   beforeMount: async function() {
-    console.log(" in beforecreated");
-    await axios.get("/api").then(response => console.log(response.data));
+    await axios.get("/api").then(response => {
+      response.data.forEach(obj => {
+        this.cards.push({
+          id: obj.id,
+          title: obj.title,
+          text: obj.body,
+          time: new Date(obj.update_at)
+        });
+      });
+    });
   },
   methods: {
     //タイトルを表示する
@@ -78,22 +85,40 @@ export default {
 
     changeTitle(input) {
       let arr = input.split("\n");
-      console.log(arr);
       let firstLine = arr[0];
       this.cards[this.cardFocused].title = firstLine;
     },
     getInput(input) {
-      console.log("in getInput func");
+      console.log("input in getInput: ", input);
       this.changeTitle(input);
       this.cards[this.cardFocused].text = input;
       let date = new Date();
-      // let year = date.getFullYear();
-      // let month = date.getMonth();
-      // let day = date.getDate();
       this.cards[this.cardFocused].time = date;
       this.$set(this.cards, this.cardFocused, this.cards[this.cardFocused]);
       this.sortlists();
       this.cardFocused = 0;
+      //update database
+      clearTimeout(this.timeoutId);
+      //入力して２秒後にサーバーに情報を送る
+      let arr = input.split("\n");
+      const title = arr[0];
+      const body = input;
+      const id = this.cards[this.cardFocused].id;
+      console.log(typeof id, id);
+      this.timeoutId = setTimeout(async function() {
+        console.log("in settimeOUt");
+        await axios
+          .put("/api/notes/" + id, {
+            id: id,
+            title: title,
+            body: body,
+            update_at: date
+          })
+          .then(response => console.log(response));
+        // let response = await fetch('/api')
+        //   .then(response => response.json())
+        //   .then(data => console.log(data))
+      }, 2000);
     },
     showDate(date) {
       let year = date.getFullYear();
@@ -124,47 +149,11 @@ export default {
       this.cards.sort((a, b) => {
         return b.time - a.time;
       });
-    },
-
-    updateDatabase() {
-      console.log(this.timeoutId);
-      clearTimeout(this.timeoutId);
-      //入力して２秒後にサーバーに情報を送る
-      this.timeoutId = setTimeout(async function() {
-        //this.sendDataToBack();
-        //
-        await axios.get("/api").then(response => console.log(response.data));
-        // let response = await fetch('/api')
-        //   .then(response => response.json())
-        //   .then(data => console.log(data))
-      }, 2000);
     }
   },
   data: () => ({
     cardFocused: 0,
-    cards: [
-      {
-        title: "title",
-        text: "title\ntextValue1",
-        time: new Date()
-      },
-      {
-        title: "title2",
-        text: "title2\ntextValue2",
-        time: new Date()
-      },
-      {
-        title: "title3",
-        text: "title3\ntextValue3",
-        time: new Date()
-      },
-      {
-        title: "and a super long one",
-        text:
-          "and a super long one\nlalalalalalala\n\nasdfasdfasdf\nasdfasdfqweroiuprqwoirwqoiupqeripuqerwhi!",
-        time: new Date()
-      }
-    ],
+    cards: [],
     timeoutId: ""
   })
 };

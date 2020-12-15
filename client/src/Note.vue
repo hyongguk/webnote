@@ -23,7 +23,6 @@ export default {
     sendMessageToCardList() {
       const valueOfTextarea = this.$refs.textareaObj.value;
       this.$emit("getInput", valueOfTextarea);
-      this.$emit("updateDatabase");
     }
   }
 };
