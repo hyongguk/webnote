@@ -27,7 +27,15 @@
               >
                 {{ showTitle(card.title) }}
               </p>
-              <p class="timestamp">{{ showDate(card.time) }}</p>
+              <div class="box">
+                <p class="timestamp">{{ showDate(card.time) }}</p>
+                <img
+                  v-if="card.isSaved"
+                  class="saved"
+                  src="./assets/PinClipart.com_report-clipart_2051127.png"
+                />
+                <img v-else class="loading" src="./assets/loader.gif" />
+              </div>
             </div>
           </div>
         </div>
@@ -61,7 +69,8 @@ export default {
           id: obj.id,
           title: obj.title,
           text: obj.body,
-          time: new Date(obj.update_at)
+          time: new Date(obj.update_at),
+          isSaved: true
         });
       });
     });
@@ -89,7 +98,13 @@ export default {
       this.cards[this.cardFocused].title = firstLine;
     },
     getInput(input) {
-      console.log("input in getInput: ", input);
+      this.cards[this.cardFocused].isSaved = false;
+      console.log(
+        "response前",
+        this.cards[0].isSaved,
+        this.cards[1].isSaved,
+        this.cards[2].isSaved
+      );
       this.changeTitle(input);
       this.cards[this.cardFocused].text = input;
       let date = new Date();
@@ -104,9 +119,8 @@ export default {
       const title = arr[0];
       const body = input;
       const id = this.cards[this.cardFocused].id;
-      console.log(typeof id, id);
+      const self = this;
       this.timeoutId = setTimeout(async function() {
-        console.log("in settimeOUt");
         await axios
           .put("/api/notes/" + id, {
             id: id,
@@ -114,7 +128,11 @@ export default {
             body: body,
             update_at: date
           })
-          .then(response => console.log(response));
+          .then(response => {
+            console.log(response);
+            console.log(self.cards);
+            self.cards[self.cardFocused].isSaved = true;
+          });
         // let response = await fetch('/api')
         //   .then(response => response.json())
         //   .then(data => console.log(data))
@@ -246,6 +264,20 @@ export default {
   margin-bottom: 0;
   font-weight: 900;
   color: rgba(128, 128, 128, 0.623);
+}
+.box {
+  display: flex;
+  justify-content: space-between;
+}
+.loading {
+  width: 14%;
+  height: 50%;
+  padding-right: 20px;
+}
+.saved {
+  width: 12%;
+  height: 40%;
+  padding-right: 20px !important;
 }
 
 .timestamp {
