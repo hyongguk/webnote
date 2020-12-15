@@ -37,17 +37,16 @@ router.post("/api/notes/", async (req, res) => {
   console.log("returningは", returning);
   res.json(returning[0]);
 });
-// //ノートを作成する
-// api.post("/api", (req, res) => {});
+//ノートを削除する
+router.delete("/api/notes/:id", async (req, res) => {
+  const id = req.params.id;
+  await db
+    .table("notes")
+    .where("id", id)
+    .del();
 
-// //ノートの内容を返す
-// api.get("/api/:title", (req, res) => {});
-
-// //ノートを更新する
-// api.patch("/api/:title", (req, res) => {});
-
-// //ノートを削除する
-// api.delete("/api/:title", (req, res) => {});
+  res.send("delete");
+});
 // //ノートを検索する
 // // TODO
 

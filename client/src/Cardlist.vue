@@ -2,11 +2,12 @@
   <div class="parent">
     <div class="nav">
       <b-button class="edit_button" @click="addNewCard" size="sm">
-        <img class="edit_image" src="./assets/icons8-edit-50.png" />
+        <img class="edit_image" src="./assets/edit.svg" />
       </b-button>
       <b-button class="delete_button" @click="deleteNote">
-        <img class="delete_image" src="./assets/garbage-icon.png" />
+        <img class="delete_image" src="./assets/trash.svg" />
       </b-button>
+      <SearchBar />
     </div>
     <div class="container">
       <div class="col" id="col1">
@@ -55,12 +56,14 @@
 </template>
 <script>
 import Note from "./Note";
+import SearchBar from "./SearchBar";
 const axios = require("axios");
 
 export default {
   name: "Cardlist",
   components: {
-    Note
+    Note,
+    SearchBar
   },
   beforeMount: async function() {
     await axios.get("/api/notes").then(response => {
@@ -166,8 +169,11 @@ export default {
         second
       );
     },
-    deleteNote() {
+    async deleteNote() {
+      //get note id to delete
+      const idToDelete = this.cards[this.cardFocused].id;
       this.cards.splice(this.cardFocused, 1);
+      await axios.delete("/api/notes/" + idToDelete);
     },
     sortlists() {
       this.cards.sort((a, b) => {
@@ -176,6 +182,8 @@ export default {
     }
   },
   data: () => ({
+    isSearching: false,
+    searchWord: "",
     currentUser: 6,
     cardFocused: 0,
     cards: [],
@@ -230,8 +238,8 @@ export default {
   box-shadow: 0 0２px 0２px 0 rgb(66, 65, 65);
 }
 .delete_image {
-  width: 100%;
-  height: 100%;
+  width: 110%;
+  height: 110%;
   display: block;
   margin-top: auto;
   margin-bottom: auto;
