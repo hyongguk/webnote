@@ -63,7 +63,7 @@ export default {
     Note
   },
   beforeMount: async function() {
-    await axios.get("/api").then(response => {
+    await axios.get("/api/notes").then(response => {
       response.data.forEach(obj => {
         this.cards.push({
           id: obj.id,
@@ -87,9 +87,27 @@ export default {
     chooseCard(value) {
       this.cardFocused = value;
     },
-    addNewCard() {
-      this.cards.unshift({ title: "", text: "", time: new Date() });
+    async addNewCard() {
+      const date = new Date();
+      //post to database
+      this.cards.unshift({
+        title: "",
+        text: "",
+        time: date,
+        isSaved: true,
+        user_id: this.currentUser
+      });
       this.chooseCard(0);
+      await axios
+        .post("/api/notes/", {
+          title: "",
+          body: "",
+          update_at: date,
+          user_id: this.currentUser
+        })
+        .then(respose => {
+          this.cards[0].id = respose.data;
+        });
     },
 
     changeTitle(input) {
@@ -99,12 +117,6 @@ export default {
     },
     getInput(input) {
       this.cards[this.cardFocused].isSaved = false;
-      console.log(
-        "response前",
-        this.cards[0].isSaved,
-        this.cards[1].isSaved,
-        this.cards[2].isSaved
-      );
       this.changeTitle(input);
       this.cards[this.cardFocused].text = input;
       let date = new Date();
@@ -128,14 +140,9 @@ export default {
             body: body,
             update_at: date
           })
-          .then(response => {
-            console.log(response);
-            console.log(self.cards);
+          .then(() => {
             self.cards[self.cardFocused].isSaved = true;
           });
-        // let response = await fetch('/api')
-        //   .then(response => response.json())
-        //   .then(data => console.log(data))
       }, 2000);
     },
     showDate(date) {
@@ -160,7 +167,6 @@ export default {
       );
     },
     deleteNote() {
-      console.log("ケバブ");
       this.cards.splice(this.cardFocused, 1);
     },
     sortlists() {
@@ -170,6 +176,7 @@ export default {
     }
   },
   data: () => ({
+    currentUser: 6,
     cardFocused: 0,
     cards: [],
     timeoutId: ""
