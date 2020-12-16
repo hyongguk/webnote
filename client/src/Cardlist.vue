@@ -292,14 +292,14 @@ export default {
 }
 #col1 {
   height: 100%;
-  border-right: 1px solid rgb(204, 197, 197);
+  border-right: 1px solid rgb(228, 223, 223);
   padding: 0;
 }
 .textbox-title {
   margin-left: 10%;
 }
 .titles {
-  border-bottom: 1px solid rgb(194, 190, 190);
+  border-bottom: 1px solid rgb(228, 223, 223);
   display: flex;
   flex-direction: column;
 }
