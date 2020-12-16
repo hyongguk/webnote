@@ -35,6 +35,7 @@ export default {
   background-color: transparent;
   border: 0 none;
   color: rgb(77, 75, 75);
+  font-size: 16px;
 }
 
 .note_form:focus {

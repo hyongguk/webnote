@@ -292,14 +292,14 @@ export default {
 }
 #col1 {
   height: 100%;
-  border-right: 1px solid rgb(219, 218, 218);
+  border-right: 1px solid rgb(204, 197, 197);
   padding: 0;
 }
 .textbox-title {
   margin-left: 10%;
 }
 .titles {
-  border-bottom: 1px solid rgb(219, 218, 218);
+  border-bottom: 1px solid rgb(194, 190, 190);
   display: flex;
   flex-direction: column;
 }
@@ -308,6 +308,7 @@ export default {
   margin-bottom: 0;
   font-weight: 600;
   color: rgb(78, 76, 76);
+  font-size: 14px;
 }
 
 .untitled_line {
@@ -321,12 +322,12 @@ export default {
   justify-content: space-between;
 }
 .loading {
-  width: 14%;
+  width: 12%;
   height: 50%;
   padding-right: 20px;
 }
 .saved {
-  width: 12%;
+  width: 10%;
   height: 40%;
   padding-right: 20px !important;
 }
