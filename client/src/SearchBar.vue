@@ -15,8 +15,7 @@ export default {
   methods: {
     searchNotes: function() {
       const inputWords = this.$refs.inputObj.value;
-      console.log(inputWords);
-      //TODO: CardlistのisSearchingとsearchWordを変更し、それに基づきcardを表示する
+      this.$emit("showSearchResults", inputWords);
     }
   }
 };

@@ -7,7 +7,7 @@
       <b-button class="delete_button" @click="deleteNote">
         <img class="delete_image" src="./assets/trash.svg" />
       </b-button>
-      <SearchBar />
+      <SearchBar @showSearchResults="showSearchResults" />
     </div>
     <div class="container">
       <div class="col" id="col1">
@@ -78,7 +78,42 @@ export default {
       });
     });
   },
+  // computed: {
+  //   filterdCards: function () {
+  //     this.cardFocused = 0;
+  //     console.log("in filterCards func: searchWord is ", this.searchWord, " and isSearching is ", this.isSearching)
+  //     let indexArr =[]
+  //     const self = this;
+  //     if (this.isSearching) {
+  //       const arr = this.cards.filter(function (card, index){
+  //         if(card.text.includes(self.searchWord)){
+  //           console.log("インデックスは",index)
+  //           indexArr.push(index);
+  //           return card;
+  //         }
+  //       });
+  //       if (arr == 0){
+  //         self.cardFocused = null;
+  //       } else {
+  //         console.log(indexArr)
+  //         self.cardFocused = indexArr[0];
+  //         return arr;
+  //       }
+  //     } else {
+  //       return this.cards;
+  //     }
+  //   },
+  // },
   methods: {
+    //serchBarでから受けとたvalueを元に検索結果を表示する
+    showSearchResults(inputValue) {
+      this.isSearching = true;
+      this.searchWord = inputValue;
+      console.log(
+        "🚀 ~ file: Cardlist.vue ~ line 86 ~ showSearchResults ~ searchWord",
+        this.searchWord
+      );
+    },
     //タイトルを表示する
     showTitle(value) {
       if (value === "") {
@@ -200,6 +235,7 @@ export default {
 }
 .changed-color {
   background: rgba(248, 206, 16, 0.644) !important;
+  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 .nav {
   width: 100%;

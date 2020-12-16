@@ -7,6 +7,7 @@
       rows="20"
       ref="textareaObj"
       :value="this.cards[this.cardFocused].text"
+      v-if="this.cards.length > 0 && this.cardFocused != null"
       @input="sendMessageToCardList"
     >
     </textarea>
