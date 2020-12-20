@@ -11,6 +11,7 @@ const router = require("../controllers");
 
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "../client/public")));
 app.use(cors());
 app.use("/api", express.json(), express.urlencoded({ extended: true }), api);
 app.use("/", router);
