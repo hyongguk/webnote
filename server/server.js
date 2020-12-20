@@ -15,7 +15,6 @@ app.use(express.static(path.join(__dirname, "../client/public")));
 app.use(cors());
 app.use("/api", express.json(), express.urlencoded({ extended: true }), api);
 app.use("/", router);
-app.use(express.static(path.join(__dirname, "../build")));
 app.get("/", (req, res) => {
   console.log("in server.js");
   res.send("どうぞ");
