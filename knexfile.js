@@ -6,7 +6,7 @@ const DATABASE_USER = process.env.DB_USER;
 const DATABASE_HOST = "127.0.0.1";
 const DATABASE_PORT = "5432";
 const DATABASE_URL =
-  process.env.DB_URL ||
+  process.env.DATABASE_URL ||
   `postgres://${process.env.DB_USER}@127.0.0.1:5432/note_app`;
 
 module.exports = {
