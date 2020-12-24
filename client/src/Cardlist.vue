@@ -219,7 +219,7 @@ export default {
   data: () => ({
     isSearching: false,
     searchWord: "",
-    currentUser: 6,
+    currentUser: 7,
     cardFocused: 0,
     cards: [],
     timeoutId: ""
