@@ -5,7 +5,10 @@ const api = express.Router();
 const db = require("../models/index.js");
 
 router.get("/api/notes/", async (req, res) => {
-  const data = await db.table("notes").orderBy("update_at", "desc");
+  const data = await db
+    .table("notes")
+    .orderBy("update_at", "desc")
+    .reject(new Error("fail to get!"));
   res.json(data);
 });
 //update title and body in notes table based on id
@@ -33,7 +36,8 @@ router.post("/api/notes/", async (req, res) => {
       body: data.body,
       update_at: data.update_at,
       user_id: data.user_id
-    });
+    })
+    .reject(new Error("failed to post notes"));
   console.log("returningは", returning);
   res.json(returning[0]);
 });
