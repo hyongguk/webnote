@@ -13,19 +13,19 @@ exports.seed = function(knex) {
     .then(function() {
       return knex("notes").insert([
         {
-          user_id: 7,
+          user_id: 1,
           title: "title1",
           body: "title1\nbody1",
           update_at: "2017-04-20 19:33:56.774+03"
         },
         {
-          user_id: 7,
+          user_id: 1,
           title: "title2",
           body: "title2\nbody2",
           update_at: "2017-04-20 19:33:56.774+03"
         },
         {
-          user_id: 7,
+          user_id: 1,
           title: "title3",
           body: "title3\nbody3",
           update_at: "2017-04-20 19:33:56.774+03"
