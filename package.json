@@ -24,7 +24,8 @@
     "nodemon": "^2.0.4",
     "pg": "^8.0.2",
     "vue": "^2.6.12",
-    "vue-axios": "^3.2.0"
+    "vue-axios": "^3.2.0",
+    "vue-router": "^3.4.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",

@@ -219,6 +219,7 @@ export default {
   data: () => ({
     isSearching: false,
     searchWord: "",
+    //TODO:ログイン機能を作成しユーザーを半円させる
     currentUser: 7,
     cardFocused: 0,
     cards: [],
