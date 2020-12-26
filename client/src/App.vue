@@ -6,17 +6,22 @@
         'url(https://images.unsplash.com/photo-1601662528567-526cd06f6582?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1858&q=80)'
     }"
   >
-    <Cardlist />
+    <router-view />
   </div>
 </template>
 <script>
-import Cardlist from "./Cardlist";
 export default {
   name: "App",
-  components: {
-    Cardlist
-  },
-  data: () => ({})
+
+  beforeMount: function() {
+    const email = localStorage.getItem("adress");
+    const pwd = localStorage.getItem("password");
+    if (email != undefined && pwd != undefined) {
+      this.$router.push("/").catch(() => {});
+    } else {
+      this.$router.push("/login").catch(() => {});
+    }
+  }
 };
 </script>
 <style>

@@ -8,6 +8,7 @@ import axios from "axios";
 import VueAxios from "vue-axios";
 import Login from "./Login.vue";
 import Signup from "./Signup.vue";
+import Cardlist from "./Cardlist";
 //import { router } from "../../server/server";
 
 // Install BootstrapVue
@@ -18,11 +19,12 @@ Vue.use(VueRouter);
 Vue.config.productionTip = false;
 
 //Define route components
-//const Login = { template: <div>login</div>}
+//const Login = { template: '<div>login</div>'}
 
 //Define some routes
 const routes = [
-  { path: "/login", componet: Login },
+  { path: "/", component: Cardlist },
+  { path: "/login", component: Login },
   { path: "/signup", component: Signup }
 ];
 //Create the router instance
@@ -30,6 +32,6 @@ const router = new VueRouter({
   routes
 });
 new Vue({
-  render: h => h(App),
-  router
+  router,
+  render: h => h(App)
 }).$mount("#app");
