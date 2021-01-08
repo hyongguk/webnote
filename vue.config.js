@@ -6,6 +6,11 @@ module.exports = {
     entry: "./client/src/main.js"
   },
   devServer: {
+    host: "0.0.0.0",
+    hot: true,
+    public: "0.0.0.0:8080",
+    disableHostCheck: true,
+    https: false,
     proxy: {
       "/": {
         target: "http://localhost:3000",

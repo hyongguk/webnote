@@ -65,18 +65,26 @@ export default {
     Note,
     SearchBar
   },
-  beforeMount: async function() {
-    await axios.get("/api/notes").then(response => {
-      response.data.forEach(obj => {
-        this.cards.push({
-          id: obj.id,
-          title: obj.title,
-          text: obj.body,
-          time: new Date(obj.update_at),
-          isSaved: true
+  props: ["user_id"],
+  created: async function() {
+    console.log("user_id is    ", this.user_id);
+    await axios
+      .get("/api/notes", {
+        params: {
+          user_id: this.user_id
+        }
+      })
+      .then(response => {
+        response.data.forEach(obj => {
+          this.cards.push({
+            id: obj.id,
+            title: obj.title,
+            text: obj.body,
+            time: new Date(obj.update_at),
+            isSaved: true
+          });
         });
       });
-    });
   },
   // computed: {
   //   filterdCards: function () {

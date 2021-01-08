@@ -23,8 +23,8 @@ Vue.config.productionTip = false;
 
 //Define some routes
 const routes = [
-  { path: "/", component: Cardlist },
-  { path: "/login", component: Login },
+  { path: "/notes ", component: Cardlist },
+  { path: "/login", component: Login, props: false },
   { path: "/signup", component: Signup }
 ];
 //Create the router instance

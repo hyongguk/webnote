@@ -36,6 +36,7 @@
           class="fadeIn second"
           name="login"
           placeholder="email adress"
+          ref="emailAdress"
         />
         <input
           type="text"
@@ -43,8 +44,15 @@
           class="fadeIn third"
           name="login"
           placeholder="password"
+          ref="password"
         />
-        <input type="submit" class="fadeIn fourth" value="Log In" />
+        <p v-if="isWrongPass">メールアドレスまたはパスワードが間違っています</p>
+        <input
+          type="submit"
+          class="fadeIn fourth"
+          value="Log In"
+          @click="sendInputValue($refs.emailAdress.value, $refs.password.value)"
+        />
       </form>
 
       <!-- Remind Passowrd -->
@@ -54,6 +62,44 @@
     </div>
   </div>
 </template>
+<script>
+import Axios from "axios";
+export default {
+  name: "Login",
+  props: ["user_id", "getUserId"],
+  data: () => ({
+    email: "",
+    password: "",
+    isWrongPass: false
+  }),
+  methods: {
+    async sendInputValue(value1, value2) {
+      await Axios.post("/api/users/", {
+        email: value1,
+        password: value2
+      })
+        .then(res => {
+          console.log(res.data);
+          if (res.data === false) {
+            console.log("間違い");
+            console.log(this.user_id);
+            this.isWrongPass = true;
+          } else {
+            console.log("正解");
+            localStorage.setItem("adress", value1);
+            localStorage.setItem("password", value2);
+            console.log(
+              "login成功後のlocalstrageは",
+              localStorage.getItem("password")
+            );
+            this.$emit("getUserId", res.data.user_id);
+          }
+        })
+        .catch(err => new Error(err));
+    }
+  }
+};
+</script>
 <style>
 @import url("https://fonts.googleapis.com/css?family=Poppins");
 
@@ -105,8 +151,8 @@ h2 {
   width: 90%;
   max-width: 450px;
   position: relative;
-  -webkit-box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
-  box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.87);
+  box-shadow: 0 30px 60px 0 rgba(0, 0, 0, 0.699);
   text-align: center;
 }
 
