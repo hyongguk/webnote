@@ -65,7 +65,7 @@ export default {
     Note,
     SearchBar
   },
-  props: ["user_id"],
+  props: ["user_id", "getUserId"],
   created: async function() {
     console.log("user_id is    ", this.user_id);
     await axios
@@ -84,7 +84,8 @@ export default {
             isSaved: true
           });
         });
-      });
+      })
+      .catch(err => alert(err));
   },
   // computed: {
   //   filterdCards: function () {

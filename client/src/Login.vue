@@ -48,7 +48,7 @@
         />
         <p v-if="isWrongPass">メールアドレスまたはパスワードが間違っています</p>
         <input
-          type="submit"
+          type="button"
           class="fadeIn fourth"
           value="Log In"
           @click="sendInputValue($refs.emailAdress.value, $refs.password.value)"
@@ -74,26 +74,13 @@ export default {
   }),
   methods: {
     async sendInputValue(value1, value2) {
-      await Axios.post("/api/users/", {
+      await Axios.post("/api/login/", {
         email: value1,
         password: value2
       })
         .then(res => {
-          console.log(res.data);
-          if (res.data === false) {
-            console.log("間違い");
-            console.log(this.user_id);
-            this.isWrongPass = true;
-          } else {
-            console.log("正解");
-            localStorage.setItem("adress", value1);
-            localStorage.setItem("password", value2);
-            console.log(
-              "login成功後のlocalstrageは",
-              localStorage.getItem("password")
-            );
-            this.$emit("getUserId", res.data.user_id);
-          }
+          //TODO: ここを完成させろ
+          console.log("ログインレスポンスのdataは", res.data);
         })
         .catch(err => new Error(err));
     }
@@ -123,8 +110,8 @@ a {
 
 h2 {
   text-align: center;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 25px !important;
+  font-weight: 550 !important;
   text-transform: uppercase;
   display: inline-block;
   margin: 40px 8px 30px 8px;

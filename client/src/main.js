@@ -23,7 +23,7 @@ Vue.config.productionTip = false;
 
 //Define some routes
 const routes = [
-  { path: "/notes ", component: Cardlist },
+  { path: "/notes", component: Cardlist },
   { path: "/login", component: Login, props: false },
   { path: "/signup", component: Signup }
 ];
