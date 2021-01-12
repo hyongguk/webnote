@@ -130,7 +130,6 @@ router.get("/api/notes", authMiddleware, async (req, res) => {
   }
 });
 
-//FIXME:認証仕様に変更
 //update title and body in notes table based on id
 router.put("/api/notes/:id", async (req, res) => {
   const note_id = req.params.id;
@@ -164,7 +163,6 @@ router.post("/api/notes/", async (req, res) => {
   }
 });
 
-//FIXME: 認証使用に変更
 //ノートを削除する
 router.delete("/api/notes/:id", async (req, res) => {
   const id = req.params.id;

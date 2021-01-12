@@ -180,16 +180,20 @@ export default {
       const id = this.cards[this.cardFocused].id;
       const self = this;
       this.timeoutId = setTimeout(async function() {
-        await axios
-          .put("/api/notes/" + id, {
-            id: id,
-            title: title,
-            body: body,
-            update_at: date
-          })
-          .then(() => {
-            self.cards[self.cardFocused].isSaved = true;
-          });
+        try {
+          await axios
+            .put("/api/notes/" + id, {
+              id: id,
+              title: title,
+              body: body,
+              update_at: date
+            })
+            .then(() => {
+              self.cards[self.cardFocused].isSaved = true;
+            });
+        } catch (err) {
+          console(err);
+        }
       }, 2000);
     },
     showDate(date) {
