@@ -173,7 +173,7 @@ router.delete("/api/notes/:id", async (req, res) => {
     .where("id", id)
     .del();
 
-  res.send("delete");
+  res.send("deleted");
 });
 module.exports = api;
 module.exports = router;
