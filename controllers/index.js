@@ -36,17 +36,8 @@ router.use(passport.session());
 // });
 //login by using passport
 
-//FIXME:temporary database
-const users = [
-  {
-    user_id: 1,
-    email: "ddd@gmail.com",
-    password: "ddd"
-  }
-];
-
-//TODO
 router.post("/api/login", (req, res, next) => {
+  console.log(req.session.passport);
   passport.authenticate("local", (err, user, info) => {
     console.log("comming in line 41");
     if (err) {
@@ -59,6 +50,7 @@ router.post("/api/login", (req, res, next) => {
     }
 
     req.login(user, () => {
+      console.log("login method");
       res.send("Logged in");
     });
   })(req, res, next);
@@ -93,33 +85,52 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
-  console.log("line 73");
-  done(null, user.id);
+  console.log("line 73", user);
+  done(null, user.user_id);
 });
 
-passport.deserializeUser((id, done) => {
+passport.deserializeUser(async (id, done) => {
   console.log("line 78");
-
-  let user = users.find(user => {
-    return user.id === id;
-  });
-  done(null, user);
+  try {
+    const userArr = await db.table("users").where({ user_id: id });
+    let user = userArr[0];
+    done(null, user);
+  } catch (err) {
+    console(err);
+  }
 });
+
+//function to ckeck if request is authenticated
+const authMiddleware = (req, res, next) => {
+  if (!req.isAuthenticated()) {
+    res.status(401).send("You are not authenticated");
+  } else {
+    return next();
+  }
+};
 
 //get all notes of user who log in now
-router.get("/api/notes", async (req, res) => {
-  console.log("req.bodyは.....", req.query.user_id);
-  const userIdJson = await db
-    .table("users")
-    .select("user_id")
-    .where({ email_adress: req.query.user_id });
-  const userId = userIdJson[0].user_id;
-  const data = await db
-    .table("notes")
-    .where({ user_id: userId })
-    .orderBy("update_at", "desc");
-  res.json(data);
+router.get("/api/notes", authMiddleware, async (req, res) => {
+  try {
+    console.log("in 118, session is :", req.session.passport.user);
+    const id = req.session.passport.user;
+    const notesArr = await db
+      .table("notes")
+      .where({ user_id: id })
+      .orderBy("update_at", "desc");
+    console.log("notes are  ", notesArr);
+    const data = {
+      user_id: id,
+      notes: notesArr
+    };
+    console.log(data);
+    res.json(data);
+  } catch (err) {
+    console.log(err);
+  }
 });
+
+//FIXME:認証仕様に変更
 //update title and body in notes table based on id
 router.put("/api/notes/:id", async (req, res) => {
   const note_id = req.params.id;
@@ -137,18 +148,23 @@ router.put("/api/notes/:id", async (req, res) => {
 //post new note in notes
 router.post("/api/notes/", async (req, res) => {
   const data = req.body;
-  const returning = await db
-    .table("notes")
-    .returning("id")
-    .insert({
-      title: data.title,
-      body: data.body,
-      update_at: data.update_at,
-      user_id: data.user_id
-    });
-  console.log("returningは", returning);
-  res.json(returning[0]);
+  try {
+    const note_id = await db
+      .table("notes")
+      .returning("id")
+      .insert({
+        title: data.title,
+        body: data.body,
+        update_at: data.update_at,
+        user_id: data.user_id
+      });
+    res.json(note_id[0]);
+  } catch (err) {
+    console.log(err);
+  }
 });
+
+//FIXME: 認証使用に変更
 //ノートを削除する
 router.delete("/api/notes/:id", async (req, res) => {
   const id = req.params.id;

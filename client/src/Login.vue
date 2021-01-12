@@ -79,8 +79,8 @@ export default {
         password: value2
       })
         .then(res => {
-          //TODO: ここを完成させろ
           console.log("ログインレスポンスのdataは", res.data);
+          this.$router.push("/notes");
         })
         .catch(err => new Error(err));
     }

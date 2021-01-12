@@ -66,16 +66,12 @@ export default {
     SearchBar
   },
   props: ["user_id", "getUserId"],
-  created: async function() {
-    console.log("user_id is    ", this.user_id);
+  mounted: async function() {
     await axios
-      .get("/api/notes", {
-        params: {
-          user_id: this.user_id
-        }
-      })
+      .get("/api/notes/", {})
       .then(response => {
-        response.data.forEach(obj => {
+        console.log("in result of get, response.data is ", response.data);
+        response.data.notes.forEach(obj => {
           this.cards.push({
             id: obj.id,
             title: obj.title,
@@ -84,6 +80,8 @@ export default {
             isSaved: true
           });
         });
+        this.currentUser = response.data.user_id;
+        console.log(this.currentUser);
       })
       .catch(err => alert(err));
   },
@@ -152,8 +150,10 @@ export default {
           update_at: date,
           user_id: this.currentUser
         })
-        .then(respose => {
-          this.cards[0].id = respose.data;
+        .then(response => {
+          this.cards[0].id = response.data;
+          console.log(this.cards);
+          console.log("added new card");
         });
     },
 
@@ -228,8 +228,7 @@ export default {
   data: () => ({
     isSearching: false,
     searchWord: "",
-    //TODO:ログイン機能を作成しユーザーを半円させる
-    currentUser: 7,
+    currentUser: null,
     cardFocused: 0,
     cards: [],
     timeoutId: ""
