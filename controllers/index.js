@@ -56,6 +56,13 @@ router.post("/api/login", (req, res, next) => {
   })(req, res, next);
 });
 
+//Log out api
+
+router.get("/api/logout", (req, res) => {
+  req.logout();
+  res.send("loged out");
+});
+
 passport.use(
   new LocalStrategy(
     {
@@ -103,7 +110,7 @@ passport.deserializeUser(async (id, done) => {
 //function to ckeck if request is authenticated
 const authMiddleware = (req, res, next) => {
   if (!req.isAuthenticated()) {
-    res.status(401).send("You are not authenticated");
+    res.json({ isAuthenticated: false });
   } else {
     return next();
   }

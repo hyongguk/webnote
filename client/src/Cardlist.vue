@@ -1,6 +1,12 @@
 <template>
   <div class="parent">
     <div class="nav">
+      <b-button id="account" class="account_button">
+        <img class="account_image" src="./assets/account.svg" />
+      </b-button>
+      <b-popover target="account" triggers="click" placement="bottom">
+        <option class="logout" @click="logout">log out</option>
+      </b-popover>
       <b-button class="edit_button" @click="addNewCard" size="sm">
         <img class="edit_image" src="./assets/edit.svg" />
       </b-button>
@@ -70,16 +76,25 @@ export default {
     await axios
       .get("/api/notes/", {})
       .then(response => {
-        console.log("in result of get, response.data is ", response.data);
-        response.data.notes.forEach(obj => {
-          this.cards.push({
-            id: obj.id,
-            title: obj.title,
-            text: obj.body,
-            time: new Date(obj.update_at),
-            isSaved: true
+        console.log(
+          "🚀 ~ file: Cardlist.vue ~ line 81 ~ mounted:function ~ response",
+          response.data
+        );
+
+        if (response.data.isAuthenticated === false) {
+          this.$router.push("/login");
+        } else {
+          console.log("in result of get, response.data is ", response.data);
+          response.data.notes.forEach(obj => {
+            this.cards.push({
+              id: obj.id,
+              title: obj.title,
+              text: obj.body,
+              time: new Date(obj.update_at),
+              isSaved: true
+            });
           });
-        });
+        }
         this.currentUser = response.data.user_id;
         console.log(this.currentUser);
       })
@@ -94,7 +109,7 @@ export default {
   //     if (this.isSearching) {
   //       const arr = this.cards.filter(function (card, index){
   //         if(card.text.includes(self.searchWord)){
-  //           console.log("インデックスは",index)
+  //           console.log("インデックスは",index
   //           indexArr.push(index);
   //           return card;
   //         }
@@ -112,6 +127,16 @@ export default {
   //   },
   // },
   methods: {
+    //send log out request to server
+    async logout() {
+      axios.get("/api/logout").then(response => {
+        console.log(
+          "🚀 ~ file: Cardlist.vue ~ line 126 ~ in logout get.response ~ data",
+          response.data
+        );
+        this.$router.push("/login");
+      });
+    },
     //serchBarでから受けとたvalueを元に検索結果を表示する
     showSearchResults(inputValue) {
       this.isSearching = true;
@@ -257,13 +282,36 @@ export default {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 100px;
 }
-.edit_button {
+.account_button {
   background-color: white !important;
   height: 30px;
   width: 50px;
   border: 1px solid rgb(201, 197, 197) !important;
   position: relative;
   left: 10px !important;
+  margin-top: auto;
+  margin-bottom: auto;
+  box-shadow: 0 0２px 0２px 0 rgb(66, 65, 65);
+}
+
+.account_image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
+.logout {
+  cursor: pointer;
+}
+.edit_button {
+  background-color: white !important;
+  height: 30px;
+  width: 50px;
+  border: 1px solid rgb(201, 197, 197) !important;
+  position: relative;
+  left: 20px !important;
   margin-top: auto;
   margin-bottom: auto;
   box-shadow: 0 0２px 0２px 0 rgb(66, 65, 65);
@@ -281,7 +329,7 @@ export default {
   width: 50px;
   border: 1px solid rgb(201, 197, 197) !important;
   position: relative;
-  left: 20px;
+  left: 30px;
   margin-top: auto;
   margin-bottom: auto;
   box-shadow: 0 0２px 0２px 0 rgb(66, 65, 65);
