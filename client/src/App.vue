@@ -12,42 +12,25 @@
       @getUserId="getUserId"
     />-->
     <!--<Cardlist v-else v-bind:user_id="user_id" />-->
-    <router-view v-bind:user_id="user_id" @getUserId="getUserId" />
+    <router-view />
   </div>
 </template>
 <script>
-// import Cardlist from "./Cardlist.vue";
-// import Login from "./Login";
+const axios = require("axios");
+
 export default {
   components: {},
   name: "App",
-  data: () => ({
-    user_id: "",
-    password: ""
-  }),
-  // mounted: function() {
-  //   console.log("looking");
-  //   const email = localStorage.getItem("adress");
-  //   const pwd = localStorage.getItem("password");
-  //   console.log("保存されているemailは   ", email);
-  //   console.log("保存されているpassは   ", pwd);
-  //   this.user_id = email;
-  //   this.password = pwd;
-  //   //TODO:以下を直す
-  //   if (email != null && pwd != null) {
-  //     console.log('in /notes redirection')
-  //     this.$router.push("/notes").catch(() => {});
-  //   } else {
-  //     console.log("ここにきた")
-  //     this.$router.push("/login").catch(() => {});
-  //   }
-  // },
 
-  methods: {
-    getUserId(value) {
-      this.user_id = value;
-      console.log("value は", this.user_id);
-    }
+  mounted: async function() {
+    await axios.get("/api/auth", {}).then(response => {
+      if (response.data.isAuthenticated) {
+        this.$router.push("/notes");
+      } else {
+        console.log("come here in 31 nile");
+        this.$router.push("/login").catch(() => {});
+      }
+    });
   }
 };
 </script>

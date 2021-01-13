@@ -72,7 +72,7 @@ export default {
     SearchBar
   },
   props: ["user_id", "getUserId"],
-  mounted: async function() {
+  beforeCreate: async function() {
     await axios
       .get("/api/notes/", {})
       .then(response => {

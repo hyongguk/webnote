@@ -34,8 +34,17 @@ router.use(passport.session());
 //     res.send(err);
 //   }
 // });
-//login by using passport
 
+//check if user is authenticated
+router.get("/api/auth", (req, res) => {
+  if (!req.isAuthenticated()) {
+    res.json({ isAuthenticated: false });
+  } else {
+    res.json({ isAuthenticated: true });
+  }
+});
+
+//login by using passport
 router.post("/api/login", (req, res, next) => {
   console.log(req.session.passport);
   passport.authenticate("local", (err, user, info) => {
