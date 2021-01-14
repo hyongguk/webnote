@@ -72,7 +72,8 @@ export default {
     SearchBar
   },
   props: ["user_id", "getUserId"],
-  beforeCreate: async function() {
+  async beforeCreate() {
+    console.log("今日わ");
     await axios
       .get("/api/notes/", {})
       .then(response => {

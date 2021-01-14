@@ -24,7 +24,13 @@ Vue.config.productionTip = false;
 //Define some routes
 const routes = [
   { path: "/", componet: App },
-  { path: "/notes", component: Cardlist },
+  {
+    path: "/notes",
+    component: Cardlist,
+    beforeEnter: () => {
+      this.$router.push("signup");
+    }
+  },
   { path: "/login", component: Login, props: false },
   { path: "/signup", component: Signup }
 ];
