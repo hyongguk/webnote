@@ -101,32 +101,6 @@ export default {
       })
       .catch(err => alert(err));
   },
-  // computed: {
-  //   filterdCards: function () {
-  //     this.cardFocused = 0;
-  //     console.log("in filterCards func: searchWord is ", this.searchWord, " and isSearching is ", this.isSearching)
-  //     let indexArr =[]
-  //     const self = this;
-  //     if (this.isSearching) {
-  //       const arr = this.cards.filter(function (card, index){
-  //         if(card.text.includes(self.searchWord)){
-  //           console.log("インデックスは",index
-  //           indexArr.push(index);
-  //           return card;
-  //         }
-  //       });
-  //       if (arr == 0){
-  //         self.cardFocused = null;
-  //       } else {
-  //         console.log(indexArr)
-  //         self.cardFocused = indexArr[0];
-  //         return arr;
-  //       }
-  //     } else {
-  //       return this.cards;
-  //     }
-  //   },
-  // },
   methods: {
     //send log out request to server
     async logout() {

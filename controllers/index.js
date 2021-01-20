@@ -5,7 +5,10 @@ const LocalStrategy = require("passport-local").Strategy;
 const db = require("../models/index.js");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
+const bcrypt = require("bcrypt");
+const flash = require("express-flash");
 
+router.use(flash());
 router.use(require("cookie-parser")());
 router.use(
   cookieSession({
@@ -16,24 +19,6 @@ router.use(
 );
 router.use(passport.initialize());
 router.use(passport.session());
-//login
-// router.post("/api/login/", async (req, res) => {
-//   try {
-//     const user = await db
-//       .table("users")
-//       .where({ email_adress: req.body.email, password: req.body.password });
-//     if (user.length != 0) {
-//       console.log(user[0].user_id);
-//       res.json({ user_id: user[0].user_id });
-//     } else {
-//       res.send("false");
-//     }
-
-//   } catch (err) {
-//     console.log(err);
-//     res.send(err);
-//   }
-// });
 
 //check if user is authenticated
 router.get("/api/auth", (req, res) => {
@@ -43,23 +28,57 @@ router.get("/api/auth", (req, res) => {
     res.json({ isAuthenticated: true });
   }
 });
+//sign up
+router.post("/api/signup", async (req, res, next) => {
+  bcrypt.hash(req.body.password, 10).then(async hash => {
+    // check if user is already in the database
+    let user = [];
+    await db
+      .table("users")
+      .where({ email_adress: req.body.email })
+      .then(result => {
+        user = result;
+      })
+      .catch(err => {
+        throw err;
+      });
+    let newUser = { email_adress: req.body.email, password: hash };
+    if (user.length === 0) {
+      await db
+        .table("users")
+        .insert(newUser)
+        .then(() => {
+          passport.authenticate("local", (err, user, info) => {
+            if (err) {
+              return next(err);
+            }
+            if (!user) {
+              return res.status(400).send([user, "Cannot log in", info]);
+            }
 
+            req.login(user, () => {
+              res.status(201).json({ isCreated: true });
+            });
+          })(req, res, next);
+        });
+    } else {
+      req.flash("sorry, that username is already taken.");
+      res.status(200).json({ isCreated: false });
+    }
+  });
+});
 //login by using passport
 router.post("/api/login", (req, res, next) => {
-  console.log(req.session.passport);
   passport.authenticate("local", (err, user, info) => {
-    console.log("comming in line 41");
     if (err) {
       return next(err);
     }
 
     if (!user) {
-      console.log("in line 47");
-      return res.status(400).send([user, "Cannot log in", info]);
+      return res.status(401).send([user, "Cannot log in", info]);
     }
 
     req.login(user, () => {
-      console.log("login method");
       res.send("Logged in");
     });
   })(req, res, next);
@@ -68,10 +87,11 @@ router.post("/api/login", (req, res, next) => {
 //Log out api
 
 router.get("/api/logout", (req, res) => {
-  req.logout();
+  req.logOut();
   res.send("loged out");
 });
 
+//check auth using passport
 passport.use(
   new LocalStrategy(
     {
@@ -79,34 +99,31 @@ passport.use(
       passwordField: "password"
     },
     async (username, password, done) => {
-      console.log("line 61");
-
       //get user info from database
-      try {
-        const userArr = await db
-          .table("users")
-          .where({ email_adress: username, password: password });
-        let user = userArr[0];
-        if (user) {
-          console.log("line 68");
+
+      const userArr = await db.table("users").where({ email_adress: username });
+      let user = userArr[0];
+      if (!user) {
+        done(null, false, { message: "Incorrect username or password" });
+      } else {
+        let userPassHash = user.password;
+        const match = await bcrypt.compare(password, userPassHash);
+
+        if (match) {
           done(null, user);
         } else {
           done(null, false, { message: "Incorrect username or password" });
         }
-      } catch (err) {
-        console.log(err);
       }
     }
   )
 );
 
 passport.serializeUser((user, done) => {
-  console.log("line 73", user);
   done(null, user.user_id);
 });
 
 passport.deserializeUser(async (id, done) => {
-  console.log("line 78");
   try {
     const userArr = await db.table("users").where({ user_id: id });
     let user = userArr[0];
@@ -127,23 +144,18 @@ const authMiddleware = (req, res, next) => {
 
 //get all notes of user who log in now
 router.get("/api/notes", authMiddleware, async (req, res) => {
-  try {
-    console.log("in 118, session is :", req.session.passport.user);
-    const id = req.session.passport.user;
-    const notesArr = await db
-      .table("notes")
-      .where({ user_id: id })
-      .orderBy("update_at", "desc");
-    console.log("notes are  ", notesArr);
-    const data = {
-      user_id: id,
-      notes: notesArr
-    };
-    console.log(data);
-    res.json(data);
-  } catch (err) {
-    console.log(err);
-  }
+  const id = req.session.passport.user;
+  const notesArr = await db
+    .table("notes")
+    .where({ user_id: id })
+    .orderBy("update_at", "desc");
+
+  const data = {
+    user_id: id,
+    notes: notesArr
+  };
+
+  res.json(data);
 });
 
 //update title and body in notes table based on id
@@ -163,23 +175,19 @@ router.put("/api/notes/:id", async (req, res) => {
 //post new note in notes
 router.post("/api/notes/", async (req, res) => {
   const data = req.body;
-  try {
-    const note_id = await db
-      .table("notes")
-      .returning("id")
-      .insert({
-        title: data.title,
-        body: data.body,
-        update_at: data.update_at,
-        user_id: data.user_id
-      });
-    res.json(note_id[0]);
-  } catch (err) {
-    console.log(err);
-  }
+  const note_id = await db
+    .table("notes")
+    .returning("id")
+    .insert({
+      title: data.title,
+      body: data.body,
+      update_at: data.update_at,
+      user_id: data.user_id
+    });
+  res.json(note_id[0]);
 });
 
-//ノートを削除する
+//delete note
 router.delete("/api/notes/:id", async (req, res) => {
   const id = req.params.id;
   await db

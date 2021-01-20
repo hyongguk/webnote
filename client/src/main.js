@@ -26,10 +26,10 @@ const routes = [
   { path: "/", componet: App },
   {
     path: "/notes",
-    component: Cardlist,
-    beforeEnter: () => {
-      this.$router.push("signup");
-    }
+    component: Cardlist
+    // beforeEnter: () => {
+    //   this.$router.push("login");
+    // }
   },
   { path: "/login", component: Login, props: false },
   { path: "/signup", component: Signup }

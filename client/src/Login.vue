@@ -1,34 +1,20 @@
-<!--<template>
-  <div class="login-signup-group">
-    <b-form>
-      <b-form-group >
-        <b-form-input size="sm" placeholder="Email adress"> </b-form-input>
-        <b-form-input placeholder="Password"> </b-form-input>
-      </b-form-group>
-      <b-button> </b-button>
-    </b-form>
-  </div>
-</template>
-<style>
-.login-signup-group {
-  width: 70px !important;
-}
-</style>
--->
 <template>
   <div class="wrapper fadeInDown">
     <div id="formContent">
-      <!-- Tabs Titles -->
-      <h2 class="active">Sign In</h2>
-      <h2 class="inactive underlineHover">Sign Up</h2>
-
-      <!-- Icon -->
-      <!--
-    <div class="fadeIn first">
-      <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
-    </div>
-    -->
-      <!-- Login Form -->
+      <h2
+        :class="{ active: isActive, inactive: !isActive }"
+        @click="toggleActive"
+        class="underlineHover"
+      >
+        Sign In
+      </h2>
+      <h2
+        :class="{ inactive: isInactive, active: !isInactive }"
+        class="underlineHover"
+        @click="toggleInactive"
+      >
+        Sign Up
+      </h2>
       <form>
         <input
           type="text"
@@ -48,14 +34,20 @@
         />
         <p v-if="isWrongPass">メールアドレスまたはパスワードが間違っています</p>
         <input
+          v-if="isActive"
           type="button"
           class="fadeIn fourth"
           value="Log In"
           @click="sendInputValue($refs.emailAdress.value, $refs.password.value)"
         />
+        <input
+          v-else
+          type="button"
+          class="fadeIn fourth"
+          value="SIGN UP"
+          @click="sendSignupInfo($refs.emailAdress.value, $refs.password.value)"
+        />
       </form>
-
-      <!-- Remind Passowrd -->
       <div id="formFooter">
         <a class="underlineHover" href="#">Forgot Password?</a>
       </div>
@@ -70,9 +62,12 @@ export default {
   data: () => ({
     email: "",
     password: "",
-    isWrongPass: false
+    isWrongPass: false,
+    isActive: true,
+    isInactive: true
   }),
   methods: {
+    //send login info to server
     async sendInputValue(value1, value2) {
       await Axios.post("/api/login/", {
         email: value1,
@@ -82,15 +77,41 @@ export default {
           console.log("ログインレスポンスのdataは", res.data);
           this.$router.push("/notes");
         })
+        .catch(() => {
+          this.isWrongPass = true;
+        });
+    },
+    //send signup info to server for signup
+    async sendSignupInfo(value1, value2) {
+      await Axios.post("/api/signup", {
+        email: value1,
+        password: value2
+      })
+        .then(res => {
+          if (res.data.isCreated) {
+            this.$router.push("/notes");
+          }
+        })
         .catch(err => new Error(err));
+    },
+
+    toggleActive() {
+      if (this.isActive == false) {
+        this.isActive = !this.nameisActive;
+        this.isInactive = !this.isInactive;
+      }
+    },
+    toggleInactive() {
+      if (this.isInactive == true) {
+        this.isInactive = !this.isInactive;
+        this.isActive = !this.isActive;
+      }
     }
   }
 };
 </script>
 <style>
 @import url("https://fonts.googleapis.com/css?family=Poppins");
-
-/* BASIC */
 
 html {
   background-color: #56baed;
@@ -166,13 +187,12 @@ h2.active {
 /* FORM TYPOGRAPHY*/
 
 input[type="button"],
-input[type="submit"],
 input[type="reset"] {
   background-color: #56baed;
   border: none;
   color: white;
   padding: 15px 80px;
-  text-align: center;
+  justify-content: center;
   text-decoration: none;
   display: inline-block;
   text-transform: uppercase;
@@ -190,7 +210,6 @@ input[type="reset"] {
 }
 
 input[type="button"]:hover,
-input[type="submit"]:hover,
 input[type="reset"]:hover {
   background-color: #39ace7;
 }
@@ -234,7 +253,9 @@ input[type="text"]:focus {
 input[type="text"]:placeholder {
   color: #cccccc;
 }
-
+input[type="button"] {
+  width: 50%;
+}
 /* ANIMATIONS */
 
 /* Simple CSS3 Fade-in-down Animation */
