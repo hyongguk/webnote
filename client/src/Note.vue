@@ -4,7 +4,7 @@
     <!-- :value="cards[cardFocused].text" -->
     <textarea
       class="note_form"
-      rows="20"
+      rows="25"
       ref="textareaObj"
       :value="this.cards[this.cardFocused].text"
       v-if="this.cards.length > 0 && this.cardFocused != null"
@@ -34,7 +34,7 @@ export default {
   width: 100%;
   background-color: transparent;
   border: 0 none;
-  color: rgb(77, 75, 75);
+  color: rgb(41, 39, 39);
   font-size: 16px;
 }
 

@@ -113,13 +113,9 @@ export default {
 <style>
 @import url("https://fonts.googleapis.com/css?family=Poppins");
 
-html {
-  background-color: #56baed;
-}
-
 body {
   font-family: "Poppins", sans-serif;
-  height: 100vh;
+  height: 100%;
 }
 
 a {

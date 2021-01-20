@@ -328,7 +328,7 @@ export default {
 }
 #col1 {
   height: 100%;
-  border-right: 1px solid rgb(228, 223, 223);
+  border-right: 1px 1px solid rgb(228, 223, 223);
   padding: 0;
 }
 .textbox-title {

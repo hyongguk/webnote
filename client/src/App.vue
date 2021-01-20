@@ -31,15 +31,15 @@ export default {
   padding: 0px;
 }
 .background {
-  background: rgb(47, 52, 82);
-  padding: 0px;
+  padding: 0;
   height: 100%;
   font-family: Helvetica, Arial, sans-serif;
+  background-color: rgb(255, 255, 255);
 }
-html {
-  height: 100%;
-}
+html,
 body {
-  height: 100%;
+  height: 100% !important;
+  margin: 0;
+  padding: 0;
 }
 </style>
