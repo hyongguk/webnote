@@ -20,10 +20,22 @@ export default {
   data: () => ({
     text: ""
   }),
+  updated() {
+    if (this.cards.length != 0) {
+      this.focusToTextarea();
+    }
+  },
   methods: {
     sendMessageToCardList() {
       const valueOfTextarea = this.$refs.textareaObj.value;
       this.$emit("getInput", valueOfTextarea);
+    },
+    focusToTextarea() {
+      console.log("FocusToTextarea was called2 ");
+      this.$nextTick(function() {
+        this.$refs.textareaObj.focus();
+      });
+      //this.$refs.textareaObj.focus();
     }
   }
 };

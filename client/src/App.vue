@@ -14,7 +14,7 @@ export default {
     console.log("今日わ");
     await axios.get("/api/auth", {}).then(response => {
       if (response.data.isAuthenticated) {
-        this.$router.push("/notes");
+        this.$router.push("/notes").catch(() => {});
       } else {
         console.log("come here in 31 nile");
         this.$router.push("/login").catch(() => {});
