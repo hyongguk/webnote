@@ -104,11 +104,7 @@ export default {
   methods: {
     //send log out request to server
     async logout() {
-      axios.get("/api/logout").then(response => {
-        console.log(
-          "🚀 ~ file: Cardlist.vue ~ line 126 ~ in logout get.response ~ data",
-          response.data
-        );
+      axios.get("/api/logout").then(() => {
         this.$router.push("/login");
       });
     },
@@ -116,10 +112,6 @@ export default {
     showSearchResults(inputValue) {
       this.isSearching = true;
       this.searchWord = inputValue;
-      console.log(
-        "🚀 ~ file: Cardlist.vue ~ line 86 ~ showSearchResults ~ searchWord",
-        this.searchWord
-      );
     },
     //タイトルを表示する
     showTitle(value) {
@@ -198,8 +190,8 @@ export default {
     },
     showDate(date) {
       let year = date.getFullYear();
-      let month = date.getMonth();
-      let day = date.getDay();
+      let month = date.getMonth() + 1;
+      let day = date.getDate();
       let time = date.getHours();
       let minute = date.getMinutes();
       let second = date.getSeconds();
