@@ -1,7 +1,5 @@
 <template>
   <div class="note_container">
-    <p></p>
-    <!-- :value="cards[cardFocused].text" -->
     <textarea
       class="note_form"
       rows="25"
@@ -18,7 +16,8 @@ export default {
   name: "Note",
   props: ["cards", "cardFocused", "getInput", "updateDatabase"],
   data: () => ({
-    text: ""
+    text: "",
+    isEditing: false
   }),
   updated() {
     if (this.cards.length != 0) {
