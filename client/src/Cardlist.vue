@@ -13,7 +13,10 @@
       <b-button class="delete_button" @click="deleteNote">
         <img class="delete_image" src="./assets/trash.svg" />
       </b-button>
-      <SearchBar @showSearchResults="showSearchResults" />
+      <SearchBar
+        @showSearchResults="showSearchResults"
+        @removeSearch="removeSearch"
+      />
     </div>
     <div class="container">
       <div class="col" id="col1">
@@ -72,21 +75,59 @@ export default {
     SearchBar
   },
   props: ["user_id", "getUserId"],
-  async beforeCreate() {
-    console.log("今日わ");
-    await axios
-      .get("/api/notes/", {})
-      .then(response => {
-        console.log(
-          "🚀 ~ file: Cardlist.vue ~ line 81 ~ mounted:function ~ response",
-          response.data
-        );
+  beforeMount() {
+    this.getNotes();
+  },
+  methods: {
+    //get all the notes of a user logging in
+    async getNotes() {
+      await axios
+        .get("/api/notes/", {})
+        .then(response => {
+          console.log(
+            "🚀 ~ file: Cardlist.vue ~ line 81 ~ mounted:function ~ response",
+            response.data
+          );
 
-        if (response.data.isAuthenticated === false) {
-          this.$router.push("/login");
-        } else {
-          console.log("in result of get, response.data is ", response.data);
-          response.data.notes.forEach(obj => {
+          if (response.data.isAuthenticated === false) {
+            this.$router.push("/login");
+          } else {
+            console.log("in result of get, response.data is ", response.data);
+            response.data.notes.forEach(obj => {
+              this.cards.push({
+                id: obj.id,
+                title: obj.title,
+                text: obj.body,
+                time: new Date(obj.update_at),
+                isSaved: true
+              });
+            });
+          }
+          this.currentUser = response.data.user_id;
+          console.log(this.currentUser);
+        })
+        .catch(err => alert(err));
+    },
+
+    //send log out request to server
+    async logout() {
+      axios.get("/api/logout").then(() => {
+        this.$router.push("/login");
+      });
+    },
+    //serchBarでから受けとたvalueを元に検索結果を表示する
+    //TODO:受け取った該当ノートだけノートリストに表示する、検索バーのバツを押せばノートは今までノートに戻る
+    async showSearchResults(inputValue) {
+      console.log(inputValue);
+      this.searchWord = inputValue;
+      this.cards = [];
+      await axios
+        .get("/api/notes/search", {
+          params: { keyword: this.searchWord }
+        })
+        .then(res => {
+          console.log(res.data);
+          res.data.forEach(obj => {
             this.cards.push({
               id: obj.id,
               title: obj.title,
@@ -95,24 +136,15 @@ export default {
               isSaved: true
             });
           });
-        }
-        this.currentUser = response.data.user_id;
-        console.log(this.currentUser);
-      })
-      .catch(err => alert(err));
-  },
-  methods: {
-    //send log out request to server
-    async logout() {
-      axios.get("/api/logout").then(() => {
-        this.$router.push("/login");
-      });
+        })
+        .catch(() => {});
     },
-    //serchBarでから受けとたvalueを元に検索結果を表示する
-    showSearchResults(inputValue) {
-      this.isSearching = true;
-      this.searchWord = inputValue;
+    //remove searched results and display all notes of the user
+    removeSearch() {
+      this.cards = [];
+      this.getNotes();
     },
+
     //タイトルを表示する
     showTitle(value) {
       if (value === "") {
@@ -222,7 +254,6 @@ export default {
     }
   },
   data: () => ({
-    isSearching: false,
     searchWord: "",
     currentUser: null,
     cardFocused: 0,

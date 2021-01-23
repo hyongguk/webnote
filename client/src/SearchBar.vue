@@ -5,7 +5,13 @@
       id="search_bar"
       placeholder="   search"
       ref="inputObj"
-      @input="searchNotes"
+      @keydown.enter="searchNotes"
+    />
+    <img
+      class="cancel"
+      src="./assets/cancel.svg"
+      title="Flaticon"
+      @click="cancelSearch"
     />
   </div>
 </template>
@@ -16,6 +22,10 @@ export default {
     searchNotes: function() {
       const inputWords = this.$refs.inputObj.value;
       this.$emit("showSearchResults", inputWords);
+    },
+    cancelSearch() {
+      this.$refs.inputObj.value = "";
+      this.$emit("removeSearch");
     }
   }
 };
@@ -35,5 +45,10 @@ export default {
 }
 #icon_search {
   margin-right: 10px;
+}
+.cancel {
+  width: 20px;
+  height: 20px;
+  margin-left: 5px;
 }
 </style>

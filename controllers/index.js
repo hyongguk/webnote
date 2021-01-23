@@ -197,5 +197,24 @@ router.delete("/api/notes/:id", async (req, res) => {
 
   res.send("deleted");
 });
+
+//search notes
+router.get("/api/notes/search", async (req, res) => {
+  const searchWord = req.query.keyword;
+  const userId = req.user.user_id;
+  let notes = [];
+  await db
+    .table("notes")
+    .where({ user_id: userId })
+    .where("body", "ilike", "%" + searchWord + "%")
+    .orderBy("update_at", "desc")
+    .then(results => {
+      notes = results;
+      res.json(notes);
+    })
+    .catch(err => {
+      throw err;
+    });
+});
 module.exports = api;
 module.exports = router;
