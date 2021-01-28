@@ -11,7 +11,6 @@ export default {
   name: "App",
 
   mounted: async function() {
-    console.log("今日わ");
     await axios.get("/api/auth", {}).then(response => {
       if (response.data.isAuthenticated) {
         this.$router.push("/notes").catch(() => {});
