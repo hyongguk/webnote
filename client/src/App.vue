@@ -15,7 +15,6 @@ export default {
       if (response.data.isAuthenticated) {
         this.$router.push("/notes").catch(() => {});
       } else {
-        console.log("come here in 31 nile");
         this.$router.push("/login").catch(() => {});
       }
     });

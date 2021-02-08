@@ -73,8 +73,7 @@ export default {
         email: value1,
         password: value2
       })
-        .then(res => {
-          console.log("ログインレスポンスのdataは", res.data);
+        .then(() => {
           this.$router.push("/notes");
         })
         .catch(() => {

@@ -84,15 +84,9 @@ export default {
       await axios
         .get("/api/notes/", {})
         .then(response => {
-          console.log(
-            "🚀 ~ file: Cardlist.vue ~ line 81 ~ mounted:function ~ response",
-            response.data
-          );
-
           if (response.data.isAuthenticated === false) {
             this.$router.push("/login");
           } else {
-            console.log("in result of get, response.data is ", response.data);
             response.data.notes.forEach(obj => {
               this.cards.push({
                 id: obj.id,
@@ -104,7 +98,6 @@ export default {
             });
           }
           this.currentUser = response.data.user_id;
-          console.log(this.currentUser);
         })
         .catch(err => alert(err));
     },
@@ -116,9 +109,7 @@ export default {
       });
     },
     //serchBarでから受けとたvalueを元に検索結果を表示する
-    //TODO:受け取った該当ノートだけノートリストに表示する、検索バーのバツを押せばノートは今までノートに戻る
     async showSearchResults(inputValue) {
-      console.log(inputValue);
       this.searchWord = inputValue;
       this.cards = [];
       await axios
@@ -126,7 +117,6 @@ export default {
           params: { keyword: this.searchWord }
         })
         .then(res => {
-          console.log(res.data);
           res.data.forEach(obj => {
             this.cards.push({
               id: obj.id,
@@ -176,8 +166,6 @@ export default {
         })
         .then(response => {
           this.cards[0].id = response.data;
-          console.log(this.cards);
-          console.log("added new card");
         });
     },
 
@@ -204,20 +192,16 @@ export default {
       const id = this.cards[this.cardFocused].id;
       const self = this;
       this.timeoutId = setTimeout(async function() {
-        try {
-          await axios
-            .put("/api/notes/" + id, {
-              id: id,
-              title: title,
-              body: body,
-              update_at: date
-            })
-            .then(() => {
-              self.cards[self.cardFocused].isSaved = true;
-            });
-        } catch (err) {
-          console(err);
-        }
+        await axios
+          .put("/api/notes/" + id, {
+            id: id,
+            title: title,
+            body: body,
+            update_at: date
+          })
+          .then(() => {
+            self.cards[self.cardFocused].isSaved = true;
+          });
       }, 2000);
     },
     showDate(date) {
@@ -270,14 +254,12 @@ export default {
   width: 100%;
 }
 .changed-color {
-  background: rgba(248, 206, 16, 0.644) !important;
-  box-shadow: 0 6px 20px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  background: rgba(158, 226, 235, 0.644) !important;
 }
 .nav {
   width: 100%;
   height: 40px;
   background: linear-gradient(rgb(236, 228, 228) 0%, rgb(204, 202, 202) 100%);
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   padding-left: 100px;
 }
 .account_button {
@@ -353,6 +335,7 @@ export default {
   height: 100%;
   border-right: 1px 1px solid rgb(228, 223, 223);
   padding: 0;
+  background-color: rgba(161, 157, 144, 0.199);
 }
 .textbox-title {
   margin-left: 10%;

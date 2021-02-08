@@ -129,7 +129,7 @@ passport.deserializeUser(async (id, done) => {
     let user = userArr[0];
     done(null, user);
   } catch (err) {
-    console(err);
+    throw err;
   }
 });
 

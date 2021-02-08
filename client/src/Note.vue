@@ -30,7 +30,6 @@ export default {
       this.$emit("getInput", valueOfTextarea);
     },
     focusToTextarea() {
-      console.log("FocusToTextarea was called2 ");
       this.$nextTick(function() {
         this.$refs.textareaObj.focus();
       });
@@ -47,6 +46,8 @@ export default {
   border: 0 none;
   color: rgb(41, 39, 39);
   font-size: 16px;
+  margin-top: 3%;
+  margin-left: 10%;
 }
 
 .note_form:focus {
