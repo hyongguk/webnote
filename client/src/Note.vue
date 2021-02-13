@@ -2,7 +2,7 @@
   <div class="note_container">
     <textarea
       class="note_form"
-      rows="25"
+      rows="40"
       ref="textareaObj"
       :value="this.cards[this.cardFocused].text"
       v-if="this.cards.length > 0 && this.cardFocused != null"
