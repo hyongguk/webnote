@@ -1,23 +1,32 @@
 <template>
   <div class="parent">
-    <div class="nav">
-      <b-button id="account" class="account_button">
-        <img class="account_image" src="./assets/account.svg" />
-      </b-button>
-      <b-popover target="account" triggers="click" placement="bottom">
-        <option class="logout" @click="logout">log out</option>
-      </b-popover>
-      <b-button class="edit_button" @click="addNewCard" size="sm">
-        <img class="edit_image" src="./assets/edit.svg" />
-      </b-button>
-      <b-button class="delete_button" @click="deleteNote">
-        <img class="delete_image" src="./assets/trash.svg" />
-      </b-button>
-      <SearchBar
-        @showSearchResults="showSearchResults"
-        @removeSearch="removeSearch"
-      />
-    </div>
+    <b-navbar toggleable="lg" type="danger" variant="info">
+      <b-navbar-brand>Webnote</b-navbar-brand>
+      <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
+      <b-collapse id="nav-collapse" is-nav>
+        <b-navbar-nav>
+          <b-button id="account" class="account_button">
+            <img class="account_image" src="./assets/account.svg" />
+          </b-button>
+          <b-popover target="account" triggers="click" placement="bottom">
+            <option class="logout" @click="logout">log out</option>
+          </b-popover>
+          <b-button class="edit_button" @click="addNewCard" size="sm">
+            <img class="edit_image" src="./assets/edit.svg" />
+          </b-button>
+          <b-button class="delete_button" @click="deleteNote">
+            <img class="delete_image" src="./assets/trash.svg" />
+          </b-button>
+        </b-navbar-nav>
+        <b-navbar-nav> </b-navbar-nav>
+        <b-navbar-nav class="ml-auto">
+          <SearchBar
+            @showSearchResults="showSearchResults"
+            @removeSearch="removeSearch"
+          />
+        </b-navbar-nav>
+      </b-collapse>
+    </b-navbar>
     <div class="container">
       <div class="col" id="col1">
         <div>
@@ -326,11 +335,17 @@ export default {
 
 .container {
   display: inline-flex;
-  height: 100%;
+  height: 90%;
   max-width: 100% !important;
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
+
+.nav-search {
+  margin-right: 0;
+  padding-right: 0;
+}
+
 #col1 {
   height: 100%;
   border-right: 1px 1px solid rgb(228, 223, 223);

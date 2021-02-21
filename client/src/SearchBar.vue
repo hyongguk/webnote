@@ -1,11 +1,13 @@
 <template>
-  <div id="container">
+  <!--<div id="container">-->
+  <b-nav-form class="mr-auto" id="container">
     <b-icon-search id="icon_search" />
-    <input
+    <b-form-input
       id="search_bar"
       placeholder="   search"
       ref="inputObj"
       @keydown.enter="searchNotes"
+      style="height: 1rem;"
     />
     <img
       class="cancel"
@@ -13,7 +15,8 @@
       title="Flaticon"
       @click="cancelSearch"
     />
-  </div>
+  </b-nav-form>
+  <!--</div>-->
 </template>
 <script>
 export default {

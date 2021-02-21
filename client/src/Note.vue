@@ -2,7 +2,7 @@
   <div class="note_container">
     <textarea
       class="note_form"
-      rows="40"
+      rows="25"
       ref="textareaObj"
       :value="this.cards[this.cardFocused].text"
       v-if="this.cards.length > 0 && this.cardFocused != null"
@@ -40,7 +40,7 @@ export default {
 </script>
 <style>
 .note_form {
-  height: 150%;
+  height: 90%;
   width: 100%;
   background-color: transparent;
   border: 0 none;
@@ -55,5 +55,6 @@ export default {
 }
 .note_container {
   width: 80%;
+  height: 100%;
 }
 </style>
