@@ -15,3 +15,4 @@ app.use("/api", express.json(), express.urlencoded({ extended: true }), api);
 app.use("/", router);
 
 module.exports = app;
+//export = app;

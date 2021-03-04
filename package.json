@@ -49,6 +49,7 @@
     "lint-staged": "^9.5.0",
     "mocha": "^8.2.1",
     "prettier": "^1.19.1",
+    "ts-node": "^9.1.1",
     "vue-template-compiler": "^2.6.11"
   },
   "gitHooks": {
