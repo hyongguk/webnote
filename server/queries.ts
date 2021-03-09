@@ -10,8 +10,8 @@ const pool = new Pool({
 
 })
 
-const getUsers = (req, res) => {
-    pool.query('select * from users', (error, results) =>{
+const getUsers = (req:any, res:any) => {
+    pool.query('select * from users', (error:any, results:any) =>{
         if(error) {
             throw error
         }

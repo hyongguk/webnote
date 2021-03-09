@@ -217,7 +217,7 @@ router.get("/api/notes/search", async (req, res) => {
     });
 });
 
-const test = require('../queries').getUsers
+const test = require('../server/queries').getUsers
 //test
 router.get("/api/test", test)
 module.exports = api;
