@@ -87,6 +87,7 @@ export default {
         password: value2
       })
         .then(res => {
+          console.log('sign up success', res.data)
           if (res.data.isCreated) {
             this.$router.push("/notes");
           }

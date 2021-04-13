@@ -27,6 +27,7 @@ export default {
       this.$emit("showSearchResults", inputWords);
     },
     cancelSearch() {
+      console.log("clicked")
       this.$refs.inputObj.value = "";
       this.$emit("removeSearch");
     }

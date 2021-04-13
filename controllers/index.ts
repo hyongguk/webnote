@@ -1,3 +1,5 @@
+import {Request, Response, NextFunction} from 'express'
+import Note from '../models/interfaces/note.interface'
 const express = require("express");
 const router = express.Router();
 const api = express.Router();
@@ -7,7 +9,7 @@ const passport = require("passport");
 const cookieSession = require("cookie-session");
 const bcrypt = require("bcrypt");
 const flash = require("express-flash");
-
+const getUsers = require('../server/queries')
 router.use(flash());
 router.use(require("cookie-parser")());
 router.use(
@@ -21,7 +23,7 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 //check if user is authenticated
-router.get("/api/auth", (req, res) => {
+router.get("/api/auth", (req: Request, res: Response) => {
   if (!req.isAuthenticated()) {
     res.json({ isAuthenticated: false });
   } else {
@@ -29,26 +31,29 @@ router.get("/api/auth", (req, res) => {
   }
 });
 //sign up
-router.post("/api/signup", async (req, res, next) => {
-  bcrypt.hash(req.body.password, 10).then(async hash => {
+router.post("/api/signup", async (req:Request, res: Response, next: NextFunction) => {
+  console.log("got request")
+  bcrypt.hash(req.body.password, 10).then(async (hash:string) => {
     // check if user is already in the database
     let user = [];
     await db
       .table("users")
       .where({ email_adress: req.body.email })
-      .then(result => {
+      .then( (result:string[]) => {
         user = result;
+        console.log("user :",user)
       })
-      .catch(err => {
-        throw err;
+      .catch((err: Error) => {
+        console.log(err);
       });
     let newUser = { email_adress: req.body.email, password: hash };
     if (user.length === 0) {
+      console.log("come in if user doesn't exist in database")
       await db
         .table("users")
         .insert(newUser)
         .then(() => {
-          passport.authenticate("local", (err, user, info) => {
+          passport.authenticate("local", (err:Error, user: any, info: any) => {
             if (err) {
               return next(err);
             }
@@ -62,14 +67,16 @@ router.post("/api/signup", async (req, res, next) => {
           })(req, res, next);
         });
     } else {
-      req.flash("sorry, that username is already taken.");
-      res.status(200).json({ isCreated: false });
+
+      res.status(400).json({ isCreated: false, error:"this username is already taken" });
     }
   });
 });
+
+
 //login by using passport
-router.post("/api/login", (req, res, next) => {
-  passport.authenticate("local", (err, user, info) => {
+router.post("/api/login", (req: Request, res: Response, next: NextFunction) => {
+  passport.authenticate("local", (err: Error, user: any, info: any ) => {
     if (err) {
       return next(err);
     }
@@ -86,7 +93,7 @@ router.post("/api/login", (req, res, next) => {
 
 //Log out api
 
-router.get("/api/logout", (req, res) => {
+router.get("/api/logout", (req: Request, res: Response) => {
   req.logOut();
   res.send("loged out");
 });
@@ -98,7 +105,7 @@ passport.use(
       usernameField: "email",
       passwordField: "password"
     },
-    async (username, password, done) => {
+    async (username: string, password: string, done: any ) => {
       //get user info from database
 
       const userArr = await db.table("users").where({ email_adress: username });
@@ -119,22 +126,22 @@ passport.use(
   )
 );
 
-passport.serializeUser((user, done) => {
+passport.serializeUser((user: any, done: any) => {
   done(null, user.user_id);
 });
 
-passport.deserializeUser(async (id, done) => {
+passport.deserializeUser(async (id: string, done: any) => {
   try {
     const userArr = await db.table("users").where({ user_id: id });
     let user = userArr[0];
     done(null, user);
   } catch (err) {
-    throw err;
+    console.log(err);
   }
 });
 
 //function to ckeck if request is authenticated
-const authMiddleware = (req, res, next) => {
+const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
   if (!req.isAuthenticated()) {
     res.json({ isAuthenticated: false });
   } else {
@@ -143,7 +150,7 @@ const authMiddleware = (req, res, next) => {
 };
 
 //get all notes of user who log in now
-router.get("/api/notes", authMiddleware, async (req, res) => {
+router.get("/api/notes", authMiddleware, async (req: any, res: Response) => {
   const id = req.session.passport.user;
   const notesArr = await db
     .table("notes")
@@ -159,7 +166,7 @@ router.get("/api/notes", authMiddleware, async (req, res) => {
 });
 
 //update title and body in notes table based on id
-router.put("/api/notes/:id", async (req, res) => {
+router.put("/api/notes/:id", async (req: Request, res: Response) => {
   const note_id = req.params.id;
   await db
     .table("notes")
@@ -169,11 +176,11 @@ router.put("/api/notes/:id", async (req, res) => {
       body: req.body.body,
       update_at: req.body.update_at
     });
-  res.send("putから");
+  res.send("notes are updated");
 });
 
 //post new note in notes
-router.post("/api/notes/", async (req, res) => {
+router.post("/api/notes/", async (req: Request, res: Response) => {
   const data = req.body;
   const note_id = await db
     .table("notes")
@@ -188,7 +195,7 @@ router.post("/api/notes/", async (req, res) => {
 });
 
 //delete note
-router.delete("/api/notes/:id", async (req, res) => {
+router.delete("/api/notes/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
   await db
     .table("notes")
@@ -199,26 +206,24 @@ router.delete("/api/notes/:id", async (req, res) => {
 });
 
 //search notes
-router.get("/api/notes/search", async (req, res) => {
+router.get("/api/notes/search", async (req: Request, res: Response) => {
   const searchWord = req.query.keyword;
-  const userId = req.user.user_id;
-  let notes = [];
+  console.log("searchWord : ", searchWord)
+  const userId = req.body.user.user_id
+  let notes: Note[] = [];
   await db
     .table("notes")
     .where({ user_id: userId })
     .where("body", "ilike", "%" + searchWord + "%")
     .orderBy("update_at", "desc")
-    .then(results => {
+    .then((results: Note[]) => {
       notes = results;
       res.json(notes);
     })
-    .catch(err => {
-      throw err;
+    .catch((err: Error) => {
+      console.log(err);
     });
 });
 
-const test = require('../server/queries').getUsers
-//test
-router.get("/api/test", test)
 module.exports = api;
 module.exports = router;
