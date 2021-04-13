@@ -70,5 +70,11 @@
     "pre-commit": "lint-staged"
   },
   "proxy": "http://localhost:3000",
-  "secure": false
+  "secure": false,
+  "lint-staged": {
+    "./client/src/*.{js,jsx,vue}": [
+      "vue-cli-service lint",
+      "git add"
+    ]
+  }
 }
